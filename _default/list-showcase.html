@@ -1,0 +1,94 @@
+<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{{ if .Params.filters }}
+<div class="filter-button-group my-4">
+  <button class="rounded px-2 border-2 border-transparent hover:border-orange-300 bg-orange-300" data-filter="*">all</button>
+  {{ range .Params.filters }}
+  <button class="rounded px-2 border-2 border-transparent hover:border-orange-300 " data-filter=".{{.}}">{{.}}</button>
+  {{ end }} 
+  <button class="rounded px-2 border-2 border-transparent hover:border-orange-300 hidden" id="others"></button>
+</div>
+{{ end }}
+
+<ul class="grid">
+  {{ range .Pages }}
+
+  {{ if isset .Params "link" }}
+  <li class="overflow-visible {{ delimit (.Params.tags | default "") " " }} grid-item max-w-xs rounded shadow mr-2 mb-2 cursor-pointer hover:shadow-lg" onclick="if (event.target.matches('a')) return; Swal.fire({ title: '{{ .Title }}', text: '{{ .Summary }}', footer: `<a href='{{ .Params.link }}' class='default-a'>Link</a>`, showConfirmButton: false, showCloseButton: true, heightAuto: false })">
+  {{ else }}
+  <li class="overflow-visible {{ delimit (.Params.tags | default "") " " }} grid-item max-w-xs rounded shadow mr-2 mb-2 cursor-pointer hover:shadow-lg" onclick="if (event.target.matches('a')) return; Swal.fire({ title: '{{ .Title }}', text: '{{ .Summary }}', showConfirmButton: false, showCloseButton: true, heightAuto: false })">
+  {{ end }}
+
+  <div class="rounded border-2 border-slate-100 bg-slate-50 hover:border-orange-500 transition transform hover:-translate-y-1 hover:scale-105">
+    <h3 class="text-lg text-center pt-2 font-bold">{{.Title}}</h3>
+    <div class="p-4">
+      <img src='{{ .Params.banner | default "https://via.placeholder.com/300x200" }}' class="w-full drop-shadow-lg" />
+    </div>
+    <p class="text-base text-center italic pb-4 px-8">{{.Description}}</p>
+    {{ if .Params.tags }}
+    <div class="flex justify-center footer border-t-2 border-gray-100 px-2">
+      {{ range .Params.tags }} 
+      <a class="text-sm text-slate-500 font-mono mx-1 transition hover:text-orange-500" href="#tag={{.}}">#{{.}}</a>
+      {{ end }}
+    </div>
+    {{ end }}
+    </div>
+  </li>
+  {{ end }}
+</ul>
+
+{{ define "script" }}
+
+let iso = null;
+let filtersElem = null;
+
+function filterIso(filterValue) {
+  let cls = 'bg-orange-300';
+
+  let e1 = filtersElem.querySelector('.' + cls);
+  e1.classList.remove(cls);
+  if (e1.matches('#others')) {
+    e1.classList.add('hidden');
+  }
+
+  let e2 = filtersElem.querySelector(`[data-filter="${filterValue}"]`);
+  if (!e2) {
+    e2 = filtersElem.querySelector('#others');
+    e2.classList.remove('hidden');
+    e2.innerText = `others: ${filterValue.substr(1)}`;
+  }
+  e2.classList.add(cls);
+
+  iso.arrange({ filter: filterValue });
+}
+
+
+function loadHash(e) {
+  let matches = location.hash.match(/tag=([^&]+)/i);
+  let hashFilter = matches && matches[1];
+  let filterValue = hashFilter && ('.' + decodeURIComponent(hashFilter));
+  if (filterValue) filterIso(filterValue);
+}
+
+
+window.onhashchange = loadHash;
+
+window.onload = () => {
+  iso = new Isotope('.grid', {
+    itemSelector: '.grid-item',
+  });
+
+  filtersElem = document.querySelector('.filter-button-group');
+  filtersElem.addEventListener('click', function(event) {
+    if (!matchesSelector(event.target, 'button')) return;
+    let filterValue = event.target.getAttribute('data-filter');
+    if (filterValue === '*') location.hash = '';
+    else location.hash = `#tag=${encodeURIComponent(filterValue.substr(1))}`;
+    filterIso(filterValue);
+  });
+
+  loadHash();
+};
+
+{{ end }}

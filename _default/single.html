@@ -1,0 +1,30 @@
+{{ define "main" }}
+  <main class="p-4 md:px-8">
+    <article>
+      <h1 id="title" class="mb-8 text-4xl">
+        {{.Title}}
+        <a href="{{.Parent.RelPermalink}}" class="inline-block text-slate-300 hover:text-orange-500 transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+          </svg>
+        </a>
+      </h1>
+      <div id="content">{{.Content}}</div>
+    </article>
+  </main>
+{{ end }}
+
+{{ define "aside" }}
+  {{ if ne .Params.toc "false" }}
+  <aside class="hidden lg:w-64 lg:flex ml-1">
+    {{ if ne .Params.toc false }}
+    <nav id="toc" class="p-4">
+      <a id="toc-title" class="font-bold flex" href="#title">
+        {{ .Title }}
+      </a>
+      {{ .TableOfContents }}
+    </nav>
+    {{ end }}
+  </aside>
+  {{ end }}
+{{ end }}

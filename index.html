@@ -1,0 +1,30 @@
+{{ define "header" }}
+  <div></div>
+{{ end }}
+
+{{ define "main" }}
+  <main aria-role="main" class="p-0">
+    <article>
+      <header class="homepage-header overflow-hidden border-b-2 border-slate-100 mb-8">
+        {{ $img := resources.Get .Params.portrait }}
+        <div class="flex flex-col items-center bg-orange-500">
+          <!--<img alt="portrait" src="{{ $img.RelPermalink }}" class="relative -z-50" /> -->
+
+          <div class="my-20 py-4 px-16">
+            <h1 id="title" class="text-5xl text-center text-white">{{ .Params.firstName }} <span class="underline">{{ .Params.lastName }}</span></h1>
+            <p id="subtitle" class="text-md md:text-2xl text-white px-4 mt-1 md:mt-2">{{ .Params.lede }}</p>
+          </div>
+        </div>
+      </header>
+
+      <div id="content" class="homepage-content max-w-prose mx-auto px-4 pt-4 pb-12 md:px-8">
+        <!-- Note that the content for index.html, as a sort of list page, will pull from content/_index.md -->
+        {{.Content}}
+      </div>
+    </article>
+  </main>
+{{ end }}
+
+{{ define "footer" }}
+  <div></div>
+{{ end }}

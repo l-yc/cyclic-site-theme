@@ -1,0 +1,22 @@
+<ul class="flex flex-row flex-wrap -ml-2 -mr-1">
+  {{ range .Pages.ByPublishDate.Reverse }}
+  <li class="p-1 basis-full">
+    <a class="rounded border-2 border-slate-300 hover:bg-slate-100 flex flex-row items-stretch" href="{{.RelPermalink}}">
+      <div class="basis-full flex mr-2 py-1">
+        <p class="text-xl w-32 ml-2 mr-4">
+          {{ .Params.PublishDate.Format "2006-01-02" }}
+        </p>
+        <h2 class="text-xl font-bold flex-1">{{ .Title }}</h2>
+
+        <div class="text-xl">
+        {{ range .Params.tags }}
+          <!--{{ $href := print (relURL "tags/") (urlize .) }}
+          <a href="{{ $href }}">#{{ . }}</a>-->
+          <span>#{{ . }}</span>
+        {{ end }}
+        </div>
+      </div>
+    </a>
+  </li>
+  {{ end }}
+</ul>
